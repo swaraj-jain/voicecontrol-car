@@ -1,8 +1,12 @@
+
 int posr=4;
 int negr=5;
 int posl=6;
 int negl=7;
+int trigpin=8;
+int echopin=9;
 String command;
+int dur,dis;
 
 void setup() {
     Serial.begin(9600);
@@ -10,16 +14,30 @@ void setup() {
     pinMode(negr,OUTPUT);
     pinMode(posl,OUTPUT);
     pinMode(negl,OUTPUT);
+    pinMode(trigpin,OUTPUT);
+    pinMode(echopin,INPUT);
+    
 
 }
 
 void loop() {
+  
+  digitalWrite(trigpin,LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigpin,HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigpin,LOW);
+  dur=pulseIn(echopin,HIGH);
+  distance=(dur/2)/29.1;
+  serial.print(distance);
+
+  
  while(Serial.available()==0)
  {//wait till get any input}
   command=Serial.read();
   Serial.println(command);
   delay(1000);
-  if(command=="forward")
+  if(command=="forward" && dis>12)
   {digitalWrite(posr,HIGH);
    digitalWrite(negr,LOW);
    digitalWrite(posl,HIGH);
@@ -39,6 +57,12 @@ void loop() {
   }
    else if(command=="left")
   {digitalWrite(posr,HIGH);
+   digitalWrite(negr,LOW);
+   digitalWrite(posl,LOW);
+   digitalWrite(negl,LOW);
+  }
+    else if(command=="stop") 
+  {digitalWrite(posr,LOW);
    digitalWrite(negr,LOW);
    digitalWrite(posl,LOW);
    digitalWrite(negl,LOW);
