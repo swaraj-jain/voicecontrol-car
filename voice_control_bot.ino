@@ -1,4 +1,6 @@
 #include <Servo.h>
+#include <SoftwareSerial.h>
+SoftwareSerial BT(0, 1);
 Servo myservo;
 int pos = 0; 
 int posr=4;
@@ -11,6 +13,7 @@ String command;
 int dur,distance;
 
 void setup() {
+    BT.begin(9600);
     Serial.begin(9600);
     pinMode(posr,OUTPUT);
     pinMode(negr,OUTPUT);
@@ -24,11 +27,14 @@ void setup() {
 }
 
 void loop() {
- while(Serial.available()==0)
- {//wait till get any input}
-  command=Serial.read();
-  Serial.println(command);
+ while(BT.available())
+  {delay (10);
+ char t =BT.read();
+ command += t;}
+ if(command.length()>0)
+ {Serial.println(command);
   delay(1000);
+  
   if(command=="forward")
   {  digitalWrite(trigpin,LOW);
    delayMicroseconds(2);
@@ -130,7 +136,6 @@ void loop() {
    digitalWrite(posl,LOW);
    digitalWrite(negl,LOW);
   }
+  command="";//reset the variable
   
-  
-}
-}
+}}
